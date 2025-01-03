@@ -1,0 +1,11 @@
+[project]
+name = "environ"
+version = "0.1.0"
+description = "A terminal based stock ticker"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "blessed>=1.20.0",
+    "numpy>=2.2.1",
+    "yfinance>=0.2.51",
+]
