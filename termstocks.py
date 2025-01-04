@@ -5,7 +5,15 @@ import numpy as np
 
 # Constants
 UPDATE_INTERVAL = 5  # seconds
-DEFAULT_STOCKS = ["^DJI", "^GSPC", "^IXIC", "^N225","000001.SS" ,"BTC-USD"]  # Dow, S&P 500, Nasdaq, Nikkei, Shanghai Composite, Bitcoin
+DEFAULT_STOCKS = [
+    "^DJI",
+    "^GSPC",
+    "^IXIC",
+    "^N225",
+    "000001.SS",
+    "BTC-USD",
+]  # Dow, S&P 500, Nasdaq, Nikkei, Shanghai Composite, Bitcoin
+
 
 def fetch_stock_data(tickers):
     """Fetch stock data for the given tickers."""
@@ -14,24 +22,21 @@ def fetch_stock_data(tickers):
         try:
             stock = yf.Ticker(ticker)
             hist = stock.history(period="1d", interval="5m")
-            price = stock.info.get("regularMarketPrice") or stock.info.get("previousClose")
+            price = stock.info.get("regularMarketPrice") or stock.info.get(
+                "previousClose"
+            )
             if hist.empty:
-                data[ticker] = {
-                    "price": price,
-                    "chart": []
-                }
+                data[ticker] = {"price": price, "chart": []}
             else:
                 chart = hist["Close"].tolist()
                 data[ticker] = {
                     "price": price,
-                    "chart": chart[-25:]  # Last 25 data points
+                    "chart": chart[-25:],  # Last 25 data points
                 }
         except Exception as e:
-            data[ticker] = {
-                "price": "N/A",
-                "chart": []
-            }
+            data[ticker] = {"price": "N/A", "chart": []}
     return data
+
 
 def render_chart(prices, width, height=5):
     """Render a traditional stock line chart."""
@@ -69,10 +74,13 @@ def render_chart(prices, width, height=5):
     # Convert rows to strings
     return ["".join(row) for row in chart]
 
+
 def render_grid(term, data):
     """Render the grid of stocks."""
     rows, cols = term.height - 2, term.width
-    grid_width = max(cols // 2, 20)  # Each square takes half the screen width or 20 chars
+    grid_width = max(
+        cols // 2, 20
+    )  # Each square takes half the screen width or 20 chars
     grid_height = max(rows // len(data), 8)  # Each square takes equal height or 8 lines
 
     output = []
@@ -83,8 +91,12 @@ def render_grid(term, data):
         price = info["price"]
         chart = render_chart(info["chart"], grid_width - 2, grid_height - 3)
 
-        color = term.green if isinstance(price, (int, float)) and price >= 0 else term.red
-        price_text = color(f"Price: {price}") if price != "N/A" else term.yellow("Price: N/A")
+        color = (
+            term.green if isinstance(price, (int, float)) and price >= 0 else term.red
+        )
+        price_text = (
+            color(f"Price: {price}") if price != "N/A" else term.yellow("Price: N/A")
+        )
 
         output.append(term.move_xy(x, y) + term.bold(f"{ticker}"))
         output.append(term.move_xy(x, y + 1) + price_text)
@@ -92,6 +104,7 @@ def render_grid(term, data):
             output.append(term.move_xy(x, y + 2 + j) + term.cyan(line))
 
     return "\n".join(output)
+
 
 def main():
     term = Terminal()
@@ -106,6 +119,7 @@ def main():
                 time.sleep(UPDATE_INTERVAL)
             except KeyboardInterrupt:
                 break
+
 
 if __name__ == "__main__":
     main()
