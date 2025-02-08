@@ -1,5 +1,5 @@
-# Term Stocks
-Your terminal based Stock Ticker
+# Pystocks
+Pystocks is a terminal based stock viewer written in Python. It utilizes the BeautifulSoup and Yfinance libraries to acquire and display up-to-date and accurate stock prices and histories.
 
 
 ## Environment setup
